@@ -13,6 +13,10 @@ from nws_ow_3hr_average import chance_rain_average
 
 app = FastAPI()
 
+# Rather than a bunch of data just kinda strung along, look into giving your response structure
+# i.e.  you could create a class with descriptive names for the various dictionaries it'd contain
+#       then if you json.dumps() your object so the api has a structured response/contract
+
 
 @app.get("/")
 def home(lat: str, long: str, hours: int):
