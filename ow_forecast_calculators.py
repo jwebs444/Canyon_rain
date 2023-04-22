@@ -1,15 +1,15 @@
 from forecast_fetchers import canyon_forecast_fetcher_ow
+import math
 
 
 def ow_accumulation_tracker(lat: str, long: str, hours: int):
     owd_list = canyon_forecast_fetcher_ow(lat, long)
     ow_acc_missing_data = False
-    tracking_index = 0
-    tracking_time = 0
     inches_tracker = 0
     ow_inches_per_period = []
-    while tracking_time < hours:
-        current_period = owd_list[tracking_index]
+
+    for i in range(math.ceil(hours/3)):
+        current_period = owd_list[i]
         try:
             period_accum = current_period['rain']
             inches_accum = period_accum['3h'] / 25.4
@@ -20,8 +20,10 @@ def ow_accumulation_tracker(lat: str, long: str, hours: int):
         except KeyError:
             ow_acc_missing_data = True
             break
-        tracking_index += 1
-        tracking_time += 3
+
+        list = [2, 2, 2]
+        list[3]
+        
     inches_tracker_string = str(inches_tracker)
     ow_inches_tracker_trim = inches_tracker_string[:5]
     return {'ow_inches_tracker_trim': ow_inches_tracker_trim,
@@ -62,7 +64,20 @@ def ow_chance_rain(lat: str, long: str, hours: int):
             break
         if time_backward < 1:
             break
-    return {'ow_pop_tracker': ow_pop_tracker,
+    return {'ow_3hour_pop_tracker': ow_pop_tracker,
             'ow_no_pop_after': time_backward,
             'ow_no_pop_forward': time_forward,
             'ow_chance_rain_missing_data': ow_chance_rain_missing_data}
+
+
+def no_precipitation_after(probability_of_precipitation: int[]):
+
+
+# nws_pop_tracker
+# nws_hours_no_pop
+# nws_no_pop_forward
+# nws_chance_rain_missing_data
+
+class CalculatedPrecipitation():
+    def __init__(self, probability_of_precipitation, no_precipitation_after, no) -> None:
+        pass

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from ow_forecast_calculators import ow_accumulation_tracker, ow_chance_rain
 from nws_forecast_calculators_hourly import nws_chance_rain
 from nws_ow_3hr_average import chance_rain_average
+from forecast_fetchers import fx, SourceEnum, PrecipitationData
 
 """
     TODO: 
@@ -20,8 +21,22 @@ app = FastAPI()
 
 @app.get("/")
 def home(lat: str, long: str, hours: int):
-    ow_acc_output = ow_accumulation_tracker(lat, long, hours)
-    ow_pop_output = ow_chance_rain(lat, long, hours)
-    nws_pop_output = nws_chance_rain(lat, long, hours)
-    average_output = chance_rain_average(lat, long, hours)
-    return ow_pop_output, ow_acc_output, nws_pop_output, average_output
+    nw_data = fx(lat, long, SourceEnum.NATIONAL_WEATHER_SERVICE)
+    ow_data = fx(lat, long, SourceEnum.OPEN_WEATHER)
+    return PrettyOutput.prettyPrintWeatherData(nw_data, ow_data)
+
+
+
+class PrettyOutput:
+
+    class Output:
+        def __init__(self, national_weather_service_data, ow, no_rain_nw, no_rain_ow) -> None:
+            self.national_weather_service_data = national_weather_service_data
+            self.open_weather_data = ow
+            pass
+    
+    def prettyPrintWeatherData(nw_data: PrecipitationData, ow_data: PrecipitationData) -> str:
+        nw_chance_after = chance_after(nw_data)
+        ow_chance_after = chance_after(ow_data)
+        return json.dumps(Output(nw_data, ow_data, nw_chance_after, ow_chance_after))
+

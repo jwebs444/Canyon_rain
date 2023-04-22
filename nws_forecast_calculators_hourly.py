@@ -7,12 +7,11 @@ def nws_chance_rain(lat: str, long: str, hours: int):
     canyon_hourly_periods = canyon_forecast_fetcher_nws(canyon_cords)
     tracking_period = 0
     nws_pop_tracker = []  # pop stands for probability of precipitation
-    while tracking_period < hours:
+
+    for i in range (hours):
         try:
-            current_period = canyon_hourly_periods[tracking_period]
-            period_pop = current_period['probabilityOfPrecipitation']
+            period_pop = canyon_hourly_periods[i]['probabilityOfPrecipitation']
             nws_pop_tracker.append(period_pop['value'])
-            tracking_period += 1
         except KeyError:
             nws_chance_rain_missing_data = True
             break
